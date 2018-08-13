@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>TMDb Movies list</title>
+
+    <meta charset="UTF-8">
+    <meta name="description" content="Simple movie list demo">
+    <meta name="keywords" content="movies, latest movies">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+    <link href="src/assets/css/main.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+
+<section id="container">
+    <header>
+        <h1>TMDb Movies List</h1>
+        <h2>Now playing (UK)</h2>
+    </header>
+
+    <section class="movie-filters">
+        <div class="movie-filter-settings">
+            <span class="link listing float-left active" onclick="MoviesApp.toggleListing('gallery')" title="Switch to gallery view">Gallery</span>
+            <span class="link listing float-left" onclick="MoviesApp.toggleListing('list')" title="Switch to list view">List</span>
+
+            <span class="link toggle hide-filters float-right" onclick="MoviesApp.toggleFilters(this)" title="Toggle filters visibility"></span>
+            <span class="link reset-filters float-right" onclick="MoviesApp.resetAllFilters()" title="Reset filters to default state">Reset Filters</span>
+        </div>
+        <div class="movie-filter rating">
+            <div class="label">Minimum rating:</div>
+            <div class="movie-filter-container"></div>
+        </div>
+        <div class="movie-filter genres">
+            <div class="label">Genres:</div>
+            <div class="movie-filter-container"></div>
+        </div>
+    </section>
+
+    <main>
+        <section id="movies-list" class="gallery"></section>
+    </main>
+</section>
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="./src/js/app.js"></script>
+
+</body>
+</html>
