@@ -1,0 +1,335 @@
+html {
+  height: 100%;
+  zoom: normal;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: inherit;
+  -moz-box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+body {
+  background: #000;
+  color: #ffffff;
+  font-family: 'Roboto', 'Helvetica', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  height: 100%;
+  line-height: 1.4;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+h1 {
+  color: #d6d6d6;
+  font-size: 30px;
+  font-weight: 700;
+  margin: 24px 0 12px;
+}
+
+h2 {
+  color: #fff;
+  font-size: 24px;
+  font-weight: 400;
+  margin: 12px 0 24px;
+}
+
+#container {
+  background: #2a2a2a;
+  margin: 0 auto;
+  max-width: 960px;
+  min-height: 100%;
+  overflow-x: hidden;
+  padding: 0 20px;
+  position: relative;
+  width: 100%;
+}
+
+#movies-list {
+  display: flex;
+  padding-bottom: 50px;
+}
+
+#movies-list.list {
+  flex-direction: column;
+}
+
+#movies-list.gallery {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+/* ------------------------------ */
+/* movie item */
+.movie-item {
+  border-bottom: 1px solid #666666;
+  display: flex;
+  padding: 20px 0;
+  width: 100%;
+}
+
+#movies-list.gallery .movie-item {
+  display: block;
+  flex-grow: 1;
+  margin-top: 15px;
+  padding: 15px;
+  text-align: center;
+  width: 240px;
+}
+
+/* ------------------------------ */
+/* movie poster */
+#movies-list.list .movie-poster {
+  flex-shrink: 0;
+  width: 150px;
+
+  /* add transition to make it look softer */
+  transition: width 0.3s;
+}
+
+#movies-list.list .movie-poster img {
+  max-width: 100%;
+}
+
+#movies-list.gallery .movie-poster img {
+  max-height: 300px;
+  max-width: 100%;
+}
+
+@media (max-width: 420px) {
+  #movies-list.list .movie-poster {
+    width: 120px;
+  }
+}
+
+@media (max-width: 360px) {
+  #movies-list.list .movie-poster {
+    width: 100px;
+  }
+}
+
+/* ------------------------------ */
+/* movie details */
+#movies-list.list .movie-details {
+  margin: 0 0 0 20px;
+}
+
+#movies-list.gallery .movie-details {
+  margin: 10px 0 5px;
+}
+
+/* ------------------------------ */
+/* movie details - title */
+.movie-title {
+  font-size: 18px;
+  font-weight: 400;
+}
+
+@media (max-width: 360px) {
+  .movie-title {
+    font-size: 16px;
+  }
+}
+
+/* ------------------------------ */
+/* movie details - genres */
+.movie-genres {
+  color: #d6d6d6;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.movie-genres span {
+  white-space: pre;
+}
+
+/* ------------------------------ */
+/* movie details - plot */
+#movies-list.list .movie-plot {
+  display: block;
+  font-size: 13px;
+  margin-top: 30px;
+}
+
+@media (max-width: 420px) {
+  #movies-list.list .movie-plot {
+    font-size: 12px;
+    margin-top: 15px;
+  }
+}
+
+/* ------------------------------ */
+/* movie details - rating */
+#movies-list.list .movie-rating {
+  color: #d6d6d6;
+  display: inline-block;
+  font-size: 13px;
+  margin-right: 30px;
+  margin-top: 20px;
+}
+
+@media (max-width: 420px) {
+  #movies-list.list .movie-rating {
+    font-size: 12px;
+    margin-top: 10px;
+  }
+}
+
+/* ------------------------------ */
+/* movie details - release date */
+#movies-list.list .movie-release-date {
+  color: #d6d6d6;
+  display: inline-block;
+  font-size: 13px;
+  margin-right: 30px;
+  margin-top: 20px;
+}
+
+@media (max-width: 420px) {
+  #movies-list.list .movie-release-date {
+    font-size: 12px;
+    margin-top: 10px;
+  }
+}
+
+/* ------------------------------ */
+/* filters */
+.movie-filters {
+  background: #3c3c3c;
+}
+
+.movie-filter,
+.movie-filter-settings {
+  border-top: 1px solid #808080;
+  min-height: 32px;
+  padding: 5px 10px;
+}
+
+.movie-filter-settings .link {
+  color: #00aac3;
+  cursor: pointer;
+  font-size: 13px;
+  margin-right: 12px;
+}
+
+.movie-filter-settings .link.active {
+  border-bottom: 1px solid #008ea7;
+}
+
+.movie-filter-settings .link.float-right {
+  margin-left: 12px;
+  margin-right: 0;
+}
+
+.movie-filter-settings .toggle {
+  display: inline-block;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.movie-filter-settings .toggle:after {
+  display: block;
+  font-size: 26px;
+  height: 20px;
+  line-height: 18px;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  top: 0;
+  width: 20px;
+}
+
+.movie-filter-settings .hide-filters:after {
+  content: "--";
+  line-height: 17px;
+}
+
+.movie-filter-settings .show-filters:after {
+  content: "+";
+}
+
+
+.movie-filter .label {
+  font-size: 14px;
+  line-height: 24px;
+  margin-bottom: 5px;
+}
+
+.movie-filter.rating > div {
+  display: inline-block;
+}
+
+.movie-filter.rating .label {
+  margin-bottom: 0;
+}
+
+.movie-filter.rating [name="rating"] {
+  margin-left: 10px;
+  width: 80px;
+}
+
+.movie-filter-container {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.movie-filter-item {
+  flex-shrink: 0;
+  font-size: 14px;
+  height: 24px;
+  margin-bottom: 5px;
+  min-width: 16.5%;
+  padding-right: 15px;
+  position: relative;
+  white-space: nowrap;
+}
+
+@media (max-width: 420px) {
+  .movie-filter-item {
+    font-size: 12px;
+    padding-right: 12px;
+  }
+}
+
+.movie-filter-item input[name='genre'] {
+  margin-right: 3px;
+  visibility: hidden;
+}
+
+.movie-filter-item .checkbox {
+  background: transparent url("../images/icon-checkbox.svg") no-repeat center / contain;
+  height: 100%;
+  left: 0;
+  opacity: .35;
+  position: absolute;
+  width: 18px;
+}
+
+.movie-filter-item .checkbox.checked {
+  background-image: url("../images/icon-checkbox-checked.svg");
+  opacity: 1;
+}
+
+
+/* ------------------------------ */
+/* helpers */
+.float-left {
+  float: left;
+}
+
+.float-right {
+  float: right;
+}
+
+.hidden {
+  display: none;
+}
