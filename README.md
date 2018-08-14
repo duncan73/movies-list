@@ -22,7 +22,7 @@ Of course in real production system the setup will be different. Preferably webp
 
 The classes are created and named in order to simulate components and services (similar to angular). They can be split into files and imported (if we use webpack etc.). if necessary. Which basically represent MVC model. The app does not use any visual frameworks or jQuery. All is native support of browser. 
 
-For http requests I decided to use _axios_ HTTP client as it supports promises and is very easy to use. I was also considering fetch API but _axios_ seems to be solid solution.   
+For http requests I decided to use _axios_ HTTP client ([https://github.com/axios/axios](https://github.com/axios/axios)) as it supports promises and is very easy to use. I was also considering fetch API but _axios_ seems to be solid solution.   
 
 TMDb returns first 20 movies when requesting now playing movies. In response there is a property which tells how many pages and total results are available. So we are able to get all results using multiple requests. But the requirement was to call the api's only once. Therefore we have only 20 movies (max) on page.
 
