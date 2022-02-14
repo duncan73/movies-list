@@ -6,12 +6,12 @@
 class MoviesComponent {
 
   // Takes moviesList as input so it can get filtered/sorted array.
-  static renderMovies (moviesList) {
+  static renderMovies(moviesList) {
     if (Array.isArray(moviesList)) {
       let moviesListHtml = '';
       const config = moviesService.getConfig();
 
-      // Default poster size is setup manually. It can be done programmatically or 'original' can be used.
+      // Default poster size is set up manually. It can be done programmatically or 'original' can be used.
       // But that will add unnecessary complexity and heavy data load.
       const posterSize = 'w342';
 
@@ -45,7 +45,7 @@ class MoviesComponent {
  */
 class MoviesFilterComponent {
   // This function renders 2 filters - rating and genres
-  static renderFilters (data) {
+  static renderFilters(data) {
     // Rating filter can be presented may ways - as number input, as range slider, as stars, as select... Or anything
     // what will be required. For simplicity select is used.
     let ratingInputHtml = `<select name="rating" onchange="MoviesApp.filterByRating(this.value)">`;
@@ -74,16 +74,11 @@ class MoviesFilterComponent {
   }
 
   // Static method to change checked state (visually)
-  static toggleCheckbox (elm) {
+  static toggleCheckbox(elm) {
     const input = elm.querySelector('input');
     const checkbox = elm.querySelector('.checkbox');
 
-    // Use of conditional toggle is not supported in IE, therefore add/remove is used.
-    if (input.checked) {
-      checkbox.classList.add('checked');
-    } else {
-      checkbox.classList.remove('checked');
-    }
+    checkbox.classList.toggle('checked', input.checked);
   }
 }
 
@@ -93,14 +88,13 @@ class MoviesFilterComponent {
  * @type {Service}
  */
 class MoviesFilterService {
-  constructor () {
+  constructor() {
     // Set default filters.
-    this.filters = {};
     this.resetFilters();
   }
 
   // Sets 2 possible filters depending on input.
-  setFilter (filter, value) {
+  setFilter(filter, value) {
     if (filter === 'rating') {
       this.filters.rating = Number(value);
     }
@@ -118,39 +112,37 @@ class MoviesFilterService {
     }
   }
 
-  getFilter (filter) {
+  getFilter(filter) {
     return this.filters[filter];
   }
 
-  getFilteredMoviesByRating (movies) {
+  getFilteredMoviesByRating(movies) {
     const rating = this.getFilter('rating');
 
     // Return filtered array of movies.
     return movies.filter(movie => movie.vote_average >= rating);
   }
 
-  getFilteredMoviesByGenres (movies) {
+  getFilteredMoviesByGenres(movies) {
     const genres = this.getFilter('genres');
 
     // If no genres specified return a copy of all movies.
     if (!genres.length) {
-      return movies.filter(() => true);
+      return [...movies];
     }
 
     // Return filtered array of movies. Only movies with all genres specified in 'genres' filter are returned.
     return movies.filter(movie => {
-      let countGenres = 0;
-
-      genres.forEach(genre => {
-        countGenres += movie.genre_ids.indexOf(genre) >= 0 ? 1 : 0;
-      });
+      const countGenres = genres.reduce((acc, genre) => {
+        return movie.genre_ids.indexOf(genre) > -1 ? acc + 1 : acc;
+      }, 0);
 
       return genres.length === countGenres;
     });
   }
 
   // Reset to default.
-  resetFilters () {
+  resetFilters() {
     this.filters = {
       genres: [],
       rating: 3
@@ -165,7 +157,7 @@ class MoviesFilterService {
  * @type {Service}
  */
 class MoviesService {
-  constructor () {
+  constructor() {
     this.data = null;
 
     // Set promises to get various data from TMDb API.
@@ -180,76 +172,59 @@ class MoviesService {
     };
   }
 
-  getData () {
+  getData() {
     if (!this.data) {
       // If data does not exist then call all promises to get the data.
       return axios.all([this.getConfiguration(), this.getGenres(), this.getNowPlaying()])
-      .then(([conf, genres, movies]) => {
-        // Set the data obj.
-        this.data = {
-          conf:   conf.data,
-          genres: genres.data.genres,
-          movies: movies.data.results
-        };
-        // Map genres ids to names and save them for every movie in data.movies.
-        this.addGenresNamesForAllMovies();
+                  .then(([conf, genres, movies]) => {
+                    // Set the data obj.
+                    this.data = {
+                      conf: conf.data,
+                      genres: genres.data.genres,
+                      movies: movies.data.results
+                    };
+                    // Map genres ids to names and save them for every movie in data.movies.
+                    this.addGenresNamesForAllMovies();
 
-        // Return resolved promise.
-        return this.data;
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+                    // Return resolved promise.
+                    return this.data;
+                  })
+                  .catch((err) => {
+                    console.error(err);
+                  });
     } else {
-      // If data are loaded already then no need to contact server. Instead promise resolve is used to
+      // If data are loaded already then no need to contact server. Instead, promise resolve is used to
       // return resolved promise. As such the return type is consistent.
       return Promise.resolve(this.data);
     }
   }
 
-  getConfig () {
+  getConfig() {
     return this.data.conf;
   }
 
   // This is basically used only once but has potential to be re-used for other properties and sort directions.
-  sortMovies (sortBy = 'popularity', direction = 'asc') {
-    this.data.movies.sort((left, right) => {
-      let result = 0;
-
-      if (direction === 'asc') {
-        result = right[sortBy] - left[sortBy];
-      } else {
-        result = left[sortBy] - right[sortBy];
-      }
-      return result;
-    });
+  sortMovies(sortBy = 'popularity', direction = 'asc') {
+    if (direction === 'asc') {
+      this.data.movies.sort((left, right) => right[sortBy] - left[sortBy]);
+    } else {
+      this.data.movies.sort((left, right) => left[sortBy] - right[sortBy]);
+    }
   }
 
   // Gets filtered movies by filtering movies by rating and genres sequentially.
-  getFilteredMovies () {
-    let filteredMovies = moviesFilterService.getFilteredMoviesByRating(this.data.movies);
-    filteredMovies = moviesFilterService.getFilteredMoviesByGenres(filteredMovies);
-
-    return filteredMovies;
+  getFilteredMovies() {
+    const filteredMoviesByRating = moviesFilterService.getFilteredMoviesByRating(this.data.movies);
+    return moviesFilterService.getFilteredMoviesByGenres(filteredMoviesByRating);
   }
 
   // Processes genres ids and returns them as html string for every movie.
-  addGenresNamesForAllMovies () {
+  addGenresNamesForAllMovies() {
     this.data.movies.forEach(movie => {
-      movie.genres = movie.genre_ids.map((val, i, arr) => {
-        let genreName = '';
-
-        for (let i = 0; i < this.data.genres.length; i++) {
-          if (val === this.data.genres[i].id) {
-            genreName = this.data.genres[i].name;
-
-            // End the cycle to avoid unnecessary loops.
-            i = this.data.genres.length;
-          }
-        }
-
-        // Wrapping each genre to a span so white space can be controlled (to not break multi word genres).
-        return `<span>${genreName}</span>`;
+      movie.genres = movie.genre_ids.map(genreId => {
+        const genreObj = this.data.genres.find(genre => genreId === genre.id);
+        // Wrapping each genre to a span so white space can be controlled (to not break multi-word genres).
+        return `<span>${genreObj.name}</span>`;
       }).join(', ');
     });
   }
@@ -261,12 +236,12 @@ class MoviesService {
  * @type {Service}
  */
 class MoviesApp {
-  constructor () {
+  constructor() {
     // Render movies using default filters.
     MoviesApp.getDefaultMoviesAndRender();
   }
 
-  static getDefaultMoviesAndRender () {
+  static getDefaultMoviesAndRender() {
     // Get data (from promises).
     moviesService.getData().then(data => {
       moviesService.sortMovies('popularity', 'asc');
@@ -278,7 +253,7 @@ class MoviesApp {
     });
   };
 
-  static filterByGenre (genre, elm) {
+  static filterByGenre(genre, elm) {
     // Toggle checkbox first.
     MoviesFilterComponent.toggleCheckbox(elm);
 
@@ -289,7 +264,7 @@ class MoviesApp {
     MoviesComponent.renderMovies(moviesService.getFilteredMovies());
   }
 
-  static filterByRating (rating) {
+  static filterByRating(rating) {
     // Set rating filter.
     moviesFilterService.setFilter('rating', rating);
 
@@ -297,7 +272,7 @@ class MoviesApp {
     MoviesComponent.renderMovies(moviesService.getFilteredMovies());
   }
 
-  static resetAllFilters () {
+  static resetAllFilters() {
     // Reset all filters to default values.
     moviesFilterService.resetFilters();
 
@@ -306,7 +281,7 @@ class MoviesApp {
   }
 
   // Toggle visibility of the filters to save space (specially on mobiles).
-  static toggleFilters (toggleElm) {
+  static toggleFilters(toggleElm) {
     const filterWrappers = document.querySelectorAll('.movie-filters .movie-filter');
 
     toggleElm.classList.toggle('hide-filters');
@@ -319,7 +294,7 @@ class MoviesApp {
   }
 
   // Toggle listing type. Default is gallery.
-  static toggleListing (type) {
+  static toggleListing(type) {
     const listWrapper = document.querySelector('#movies-list');
 
     if (listWrapper.className !== type) {
